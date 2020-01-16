@@ -13,6 +13,7 @@ export default class extends wepy.app {
     pages: [
       // 'pages/authorize',
       'pages/home',
+      'pages/category',
       'pages/goodsList',
       'pages/goodsDetail',
       'pages/shopCart',
@@ -71,20 +72,10 @@ export default class extends wepy.app {
         "iconPath": "images/icon_home.png",
         "selectedIconPath": "images/icon_home_active.png"
       }, {
-        "pagePath": "pages/home",
+        "pagePath": "pages/category",
         "text": "分类",
         "iconPath": "images/icon_classify.png",
         "selectedIconPath": "images/icon_classify_active.png"
-      }, {
-        "pagePath": "pages/shopCart",
-        "text": "购物车",
-        "iconPath": "images/icon_shop_cart.png",
-        "selectedIconPath": "images/icon_shop_cart_active.png"
-      }, {
-        "pagePath": "pages/my",
-        "text": "我",
-        "iconPath": "images/icon_info.png",
-        "selectedIconPath": "images/icon_info_active.png"
       }]
     }
   }
@@ -101,7 +92,9 @@ export default class extends wepy.app {
   }
 
   async onLaunch(option) {
-
+    let systemInfo = wepy.getSystemInfoSync();
+    wepy.setStorageSync('systemInfo', systemInfo);
+    console.log(systemInfo)
   }
 }
 
