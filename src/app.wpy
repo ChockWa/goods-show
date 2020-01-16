@@ -65,7 +65,7 @@ export default class extends wepy.app {
       "color": "#999999",
       "selectedColor": "#e01f27",
       "backgroundColor": "#ffffff",
-      "borderStyle": "white",
+      "borderStyle": "black",
       "list": [{
         "pagePath": "pages/home",
         "text": "首页",

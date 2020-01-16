@@ -8,7 +8,7 @@
     </view>
   </view> -->
   <view class="classify" style="height:{{windowHeight}}px">
-    <scroll-view class="classify_catetory" scroll-y scroll-with-animation="true" style="height:{{windowHeight-50}}px">
+    <scroll-view class="classify_catetory" scroll-y scroll-with-animation="true" style="height:{{windowHeight}}px">
       <view class="name {{item.active? 'active':''}}" wx:for="{{rootcateList}}" wx:key="item" @tap="changeCate" data-code="{{item.code}}">
         {{item.name}}
       </view>
@@ -165,19 +165,19 @@ export default class Classify extends wepy.page {
     width: 200rpx;
     position: relative;
     z-index: 1;
-    border-right: 3rpx solid #EDEDED;
+    border-right: 3rpx solid #D5D5D5;
     .name {
       text-align: center;
       height: 100rpx;
       line-height: 100rpx;
-      font-size: 28rpx;
+      font-size: 32rpx;
       color: #666;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
     .active {
-      border-left: 6rpx solid #e01f27;
+      border-left: 10rpx solid #e01f27;
       background: #fff;
       color: #31312b;
       font-weight: 600;
@@ -202,8 +202,8 @@ export default class Classify extends wepy.page {
       justify-content: space-between;
     }
     .child_image {
-      width: 60px;
-      height: 60px;
+      width: 160rpx;
+      height: 160rpx;
     }
     .child_name {
       font-size: 26rpx;
