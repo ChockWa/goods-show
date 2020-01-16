@@ -1,0 +1,227 @@
+<!--  -->
+<template>
+  <view class="address-add" style="height:{{winHeight}}rpx">
+    <view class='c-form'>
+      <view class='c-form-item'>
+        <text class="c-form-item-text">收货人：</text>
+        <wux-input type='text' maxlength="10" controlled class="c-form-item-input" value="{{name}}" bind:change="nameChange"></wux-input>
+      </view>
+      <wux-divider show-text="{{ false }}" />
+      <view class='c-form-item'>
+        <text class="c-form-item-text">联系电话：</text>
+        <wux-input type='number' controlled maxlength="18" class="c-form-item-input" value="{{phone}}" bind:change="phoneChange"></wux-input>
+      </view>
+      <wux-divider show-text="{{ false }}" />
+      <view class='c-form-item'>
+        <text class="c-form-item-text">所在地区：</text>
+        <picker class="c-form-item-input" mode="region" bind:change="regionChange" value="{{region}}" custom-item="{{customItem}}">
+          <view class="picker">
+            {{region[0]}} {{region[1]}} {{region[2]}}
+          </view>
+        </picker>
+      </view>
+      <wux-divider show-text="{{ false }}" />
+      <view class='c-form-item'>
+        <text class="c-form-item-text">详细地址：</text>
+        <textarea controlled maxlength="64" clear rows="3" class="c-form-item-textarea" bindinput="addressChange" value="{{address}}"></textarea>
+      </view>
+      <wux-divider show-text="{{ false }}" />
+    </view>
+    <view class='c-form-switch'>
+      <text class="c-form-item-text">设为默认地址</text>
+      <wux-switch color="calm" class="c-form-item-switch" value="{{ isDefault }}" color="balanced" bind:change="isDefaultChange" />
+    </view>
+    <wux-divider show-text="{{ false }}" />
+    <wux-wing-blank size="large">
+      <button class="c-save" bindtap="save">保 存</button>
+    </wux-wing-blank>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+export default class ReceiveAddressAdd extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
+    navigationBarTitleText: '添加新地址',
+    usingComponents: {
+      //   'wux-tab': './../lib/wux/tab/index',
+      //   'wux-tabs': './../lib/wux/tabs/index',
+      'wux-divider': './../lib/wux/divider/index',
+      //   'wux-white-space': './../lib/wux/white-space/index',
+      'wux-wing-blank': './../lib/wux/wing-blank/index',
+      'wux-button': './../lib/wux/button/index',
+      'wux-switch': '../../lib/wux/switch/index',
+      'wux-input': './../lib/wux/input/index',
+      'wux-textarea': './../lib/wux/textarea/index'
+    }
+  };
+  data = {
+    region: ['广东省', '广州市', '海珠区'],
+    customItem: '全部',
+    name: '',
+    phone: '',
+    address: '',
+    isDefault: false,
+    addressId: null,
+    winHeight: '100%'
+  };
+  components = {};
+  methods = {
+    bindRegionChange: function(e) {
+      console.log('picker发送选择改变，携带值为', e.detail.value);
+      console.log(e.detail.value);
+      this.setData({
+        region: e.detail.value
+      });
+    },
+    isDefaultChange() {
+      this.isDefault = !this.isDefault;
+    },
+    nameChange(e) {
+      this.name = e.detail.value;
+    },
+    phoneChange(e) {
+      this.phone = e.detail.value;
+    },
+    addressChange(e) {
+      this.address = e.detail.value;
+    },
+    regionChange(e) {
+      this.region = e.detail.value;
+    },
+    async save() {
+      console.log(this.name);
+      if (this.isEmpty(this.name)) {
+        tip.alert('收货人不能为空');
+        return;
+      }
+      if (this.isEmpty(this.phone)) {
+        tip.alert('联系电话不能为空');
+        return;
+      }
+      if (this.region.length < 1) {
+        tip.alert('所在地区不能为空');
+        return;
+      }
+      if (this.isEmpty(this.address)) {
+        tip.alert('详细的地址不能为空');
+        return;
+      }
+      const params = {
+        id: this.addressId || null,
+        name: this.name,
+        phone: this.phone,
+        address: this.address,
+        province: this.region[0],
+        city: this.region[1],
+        district: this.region[2],
+        isDefault: this.isDefault
+      };
+      let resp = await api.receiveAddress.save(params);
+      if (resp.code === 0) {
+        tip.success('保存成功');
+        wx.navigateBack({
+          delta: 1
+        });
+      } else {
+        console.log(resp.msg);
+        tip.error('保存失败');
+      }
+    }
+  };
+  isEmpty(val) {
+    if (val === undefined || val === null || val.trim() === '') {
+      return true;
+    }
+    return false;
+  }
+  async initData() {
+    let resp = await api.receiveAddress.getById({ addressId: this.addressId });
+    if (resp.code === 0) {
+      this.addressId = resp.data.id;
+      this.name = resp.data.name;
+      this.phone = resp.data.phone;
+      this.address = resp.data.address;
+      this.region[0] = resp.data.province;
+      this.region[1] = resp.data.city;
+      this.region[2] = resp.data.district;
+      this.isDefault = resp.data.isDefault;
+      this.$apply();
+    } else {
+      console.log(resp.msg);
+      tip.error('获取地址信息失败');
+    }
+  }
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad(options) {
+    if (options.addressId) {
+      this.addressId = options.addressId;
+      this.initData();
+    }
+  }
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.address-add {
+  // background-color: #e9e9e2;
+  .c-form {
+    margin-top: 30rpx;
+    background-color: #fff;
+    .c-form-item {
+      display: flex;
+      font-size: 32rpx;
+      color: #31312b;
+      .c-form-item-text {
+        width: 200rpx;
+        text-align: right;
+      }
+      .c-form-item-input {
+        width: 400rpx;
+        margin-left: 30rpx;
+      }
+      .c-form-item-textarea {
+        width: 400rpx;
+        height: 140rpx;
+        margin-left: 30rpx;
+        padding-top: 3rpx;
+      }
+    }
+  }
+  .c-form-switch {
+    background-color: #fff;
+    font-size: 32rpx;
+    color: #31312b;
+    display: flex;
+    justify-content: space-between;
+    .c-form-item-text {
+      padding-left: 46rpx;
+      padding-top: 12rpx;
+    }
+    .c-form-item-switch {
+      padding-right: 36rpx;
+    }
+  }
+  .c-save {
+    margin-top: 70rpx;
+    height: 88rpx;
+    background-color: #31312b;
+    color: #fff;
+    border-radius: 0;
+    font-size: 36rpx;
+  }
+  .wux-divider {
+    margin: 24rpx 0;
+  }
+}
+.textarea {
+  height: 140rpx;
+}
+</style>

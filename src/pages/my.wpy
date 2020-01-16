@@ -1,0 +1,259 @@
+<template>
+    <!-- <view class="info">
+        <view class="header">
+            <view class="header_content">
+                <image class="avatarUrl" src="{{avatarUrl}}" />
+                <view class="nickName">{{nickName}}</view>
+            </view>
+        </view>
+        <view>
+          <orderBar :counts="counts"></orderBar>
+        </view>
+        <wux-wing-blank size="large">
+        <view class="info_block">
+            <navigator class="item" url="/pages/order">
+                <view class="item_content">
+                    <view class="text">全部订单</view>
+                </view>
+                <view class="arrow">&gt;</view>
+            </navigator>
+            <navigator class="item" url="/pages/collection?type=1">
+                <view class="item_content">
+                    <wux-icon type="iso-star"></wux-icon>
+                    <view class="text">我的收藏</view>
+                </view>
+                <view class="arrow">&gt;</view>
+            </navigator>
+            <navigator class="item" url="/pages/receiveAddress">
+                <view class="item_content">
+                    <view class="text">收货地址管理</view>
+                </view>
+                <view class="arrow">&gt;</view>
+            </navigator>
+        </view>
+        </wux-wing-blank>
+    </view> -->
+    <scroll-view scroll-y style='height:100vh;'>
+  <view class='top'>
+    <view>
+       <view class='img'><open-data type="userAvatarUrl"></open-data></view><view class='text'><open-data type="userNickName"></open-data></view>
+    </view>
+  </view>
+  <navigator url="/pages/order/index" class='item'>
+    <view class='left'>
+      我的订单
+    </view>
+    <view class='right'>
+      <text>查看全部订单</text>
+      <image src='/images/my_order.png'></image>
+    </view>
+  </navigator>
+  <view class='icon'>
+    <navigator url="" hover-class="none" >
+      <image src='/images/pending_payment.png' mode="aspectFit"></image>
+      <text>代付款</text>
+    </navigator>
+    <navigator url="" hover-class="none" >
+      <image src='/images/pending_delivery.png' mode="aspectFit"></image>
+      <text>代发货</text>
+    </navigator>
+    <navigator url="" hover-class="none" >
+      <image src='/images/already_shipped.png' mode="aspectFit"></image>
+      <text>已发货</text>
+    </navigator>
+    <navigator url="" hover-class="none" >
+      <image src='/images/completed.png' mode="aspectFit"></image>
+      <text>已完成</text>
+    </navigator>
+  </view>
+  <!-- <navigator url="/pages/coupon/index" class='item'>
+    <view class='left'>
+      我的优惠券
+    </view>
+    <view class='right'>
+      <image src='/images/my_order.png'></image>
+    </view>
+  </navigator> -->
+  <navigator url="/pages/receiveAddress" class='item'>
+    <view class='left'>
+      地址管理
+    </view>
+    <view class='right'>
+      <image src='/images/my_order.png'></image>
+    </view>
+  </navigator>
+</scroll-view>
+</template>
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import orderBar from '@/components/order_bar';
+export default class My extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
+    navigationBarTitleText: '我',
+    usingComponents: {
+      'wux-wing-blank': './../lib/wux/wing-blank/index',
+      "wux-icon": "./../lib/wux/icon/index"
+    }
+  };
+  components = {orderBar};
+  data = {
+    avatarUrl: '',
+    nickName: '',
+    counts: {}
+  };
+  async initUserInfo(phone, code) {
+    let that = this;
+    let userInfo = wepy.getStorageSync('userInfo');
+    this.avatarUrl = userInfo.avatarUrl;
+    this.nickName = userInfo.nickName;
+    this.$apply();
+  }
+
+  onLoad() {
+    this.initUserInfo();
+  }
+  onShow() {}
+  computed = {};
+  methods = {};
+  events = {};
+}
+</script>
+<style lang="less">
+// .header {
+//   background: #31312b;
+//   height: 260rpx;
+//   width: 100%;
+// }
+
+// .header_content {
+//   width: 100%;
+//   margin: 0 auto;
+//   text-align: center;
+//   padding-top: 48rpx;
+// }
+
+// .avatarUrl {
+//   width: 122rpx;
+//   height: 122rpx;
+//   border-radius: 1000px;
+// }
+
+// .nickName {
+//   font-size: 30rpx;
+//   padding-top: 15rpx;
+//   color: #fff;
+// }
+
+// .info_block {
+//   margin-top: 10rpx;
+//   font-size: 30rpx;
+//   .item {
+//     border-bottom: 1rpx solid #dbdbdb;
+//     background: #fff;
+//     padding: 22rpx 20rpx;
+//     display: flex;
+//     justify-content: space-between;
+//   }
+//   .item_content {
+//     display: flex;
+//     align-items: center;
+//     .text {
+//       margin-left: 20rpx;
+//       color: #31312b;
+//     }
+//   }
+//   .item_img {
+//     width: 42rpx;
+//     height: 42rpx;
+//   }
+//   .arrow {
+//     color: #cccccc;
+//     font-size: 32rpx;
+//   }
+//   .tip {
+//     color: #999;
+//     font-size: 24rpx;
+//     margin-top: 20rpx;
+//     margin-left: 60rpx;
+//   }
+// }
+.top{
+ height: 30vh;
+ border-bottom: 3px solid #EDEDED;
+ background: #fff;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ background-color: #31312b;
+}
+.top .img{
+  width: 140rpx;
+  height: 140rpx;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.top .text{
+  text-align: center;
+  font-size: 30rpx;
+  color: #EDEDED;
+}
+.item{
+  display: flex;
+  line-height: 40px;
+  border-bottom: 3rpx solid #EDEDED;
+  background: #fff;
+  padding: 0 16px;
+}
+
+.item .left{
+  flex: 1 0 50%;
+  font-size: 14px;
+  color: #333333;
+}
+
+.item .right{
+  flex: 1 0 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item image{
+  width: 8px;
+  height: 15px;
+}
+
+.item text{
+  font-size: 30rpx;
+  color: #999999;
+  padding-right: 10px;
+}
+
+.icon{
+  border-bottom:3rpx solid #EDEDED; 
+  display: flex;
+  padding: 12px 0;
+}
+.icon image{
+  display: block;
+  width: 50rpx;
+  height: 50rpx;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+.icon text{
+  display: block;
+  text-align: center;
+  width: 100%;
+  font-size: 14px;
+  color: #333;
+  padding-top: 10px;
+}
+.icon navigator{
+  flex: 1 0 25%;
+}
+</style>

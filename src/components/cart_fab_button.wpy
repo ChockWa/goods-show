@@ -1,0 +1,51 @@
+<template>
+    <view class="wux-fab-button wux-fab-button--bottomRight" bindtap="goToCart">
+        <view class="c-fab-button">
+            <wux-icon size="20" color="#fff" type="ios-cart"/>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class CartFabButton extends wepy.component {
+  props = {};
+  methods = {
+    goToCart() {
+      wepy.navigateTo({
+        url: './../../pages/shopCart'
+      });
+    }
+  };
+}
+</script>
+<style lang="less">
+.wux-fab-button {
+  position: fixed;
+  z-index: 1500;
+}
+.wux-fab-button--bottomRight {
+  right: 30rpx;
+  bottom: 30rpx;
+}
+.c-fab-button {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  z-index: 1500;
+  background-color: #000;
+  color: #fff;
+  overflow: visible;
+  transition-duration: 0.3s;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center; // box-shadow: 0 0 8rpx rgba(0, 0, 0, 0.14), 0 8rpx 16rpx rgba(0, 0, 0, 0.28);
+  right: 0;
+  bottom: 0;
+  position: relative;
+  margin-bottom: 140rpx;
+  opacity: 0.6;
+}
+</style>

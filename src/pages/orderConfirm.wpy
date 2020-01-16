@@ -1,0 +1,292 @@
+<!-- 订单确认页 -->
+<template>
+  <view class='c-order-confirm'>
+    <view>
+      <wux-wing-blank size="large">
+        <view class="c-receive-address">
+          <view class="address-left">
+            <wux-icon type="ios-pin" size="22" />
+          </view>
+          <view class="address-right">
+            <view class="address-header">
+              <view>{{receiveAddress.name}}</view>
+              <view>{{receiveAddress.phone}}</view>
+            </view>
+            <view class="address-middle">
+              <view>{{receiveAddress.province}} {{receiveAddress.city}} {{receiveAddress.district}} {{receiveAddress.address}}</view>
+            </view>
+            <view class="address-bottom" bindtap="chooseOtherAddr">
+              <text>其他地址>></text>
+            </view>
+          </view>
+        </view>
+      </wux-wing-blank>
+      <wux-white-space size="default" bodyStyle="background-color: #f3f3f1;" />
+      <view class='c-goods-detail'>
+        <repeat for="{{details}}" key="index" index="index" item="item">
+          <view class="list_box">
+            <wux-wing-blank size="large">
+              <view class="goods-info">
+                <!-- <icon class="icon_check" type="success" color="{{item.isChecked?'#1a1a1a':'rgb(153,153,153)'}}" @tap.stop="selectGoods" data-index="{{index}}" data-shopCartId="{{item.shopCartId}}" size="20" /> -->
+                <view class="img-box">
+                  <navigator url="/pages/goodsDetail?goodsId={{item.goodsId}}">
+                    <image src="{{item.cover}}" class="img" />
+                  </navigator>
+                </view>
+                <view class="text-box">
+                  <view class="goods-title">
+                    {{item.name}}
+                  </view>
+                  <view class="sku-area">
+                    <text wx:for="{{item.goodsSkuMap}}" wx:for-index="key" wx:for-item="value">{{key}}:{{value}} </text>
+                  </view>
+                  <view class="price-number">
+                    <view class="goods-price">¥ {{item.price}}</view>
+                    <view class="num-area">
+                      ×{{item.quantity}}
+                      <!-- <wux-input-number controlled value="{{item.quantity}}" data-index="{{index}}" min="1" max="9999" color="dark" bind:change="changeQuantity" /> -->
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </wux-wing-blank>
+          </view>
+          <wux-white-space size="small" bodyStyle="background-color: #f3f3f1;" />
+        </repeat>
+      </view>
+      <wux-white-space size="small" bodyStyle="background-color: #f3f3f1;" />
+      <wux-wing-blank size="large">
+      <view class='c-express'>
+        <view>配送方式</view>
+        <view class="right">普通快递：运费¥0</view>
+      </view>
+      </wux-wing-blank>
+      <wux-white-space size="default" bodyStyle="background-color: #f3f3f1;" />
+      <wux-wing-blank size="large">
+      <view class='c-fee'>
+        <view>
+          <view>商品总价</view>
+          <view>运费</view>
+        </view>
+        <view class="right">
+          <view>¥{{confirmInfo.totalAmount}}</view>
+          <view>+¥0</view>
+        </view>
+      </view>
+      </wux-wing-blank>
+      <wux-white-space size="default" bodyStyle="background-color: #f3f3f1;" />
+      <!-- <view class='c-tips'></view> -->
+    </view>
+    <view class='c-bottom-area'>
+      <view class="left">您需要支付：<text class="price">¥{{confirmInfo.totalAmount}}</text></view>
+      <view>
+        <button class="c-order-btn" @tap.stop="order">确 认</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+export default class OrderConfirm extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
+    navigationBarTitleText: '确认订单',
+    usingComponents: {
+      'wux-white-space': './../lib/wux/white-space/index',
+      'wux-icon': './../lib/wux/icon/index',
+      'wux-wing-blank': './../lib/wux/wing-blank/index',
+      'wux-tag': './../lib/wux/tag/index',
+      'wux-button': './../lib/wux/button/index'
+    }
+  };
+  data = {
+    orderToken: '',
+    confirmInfo: {},
+    receiveAddress: {},
+    details: []
+  };
+  async getOrderConfirmInfo() {
+    const _this = this;
+    let resp = await api.order.orderConfirmInfo({
+      orderToken: this.orderToken
+    });
+    if (resp.code === 0) {
+      let data = resp.data;
+      Object.assign(this.confirmInfo, data);
+      Object.assign(this.receiveAddress, this.confirmInfo.receiveAddress);
+      _this.details = _this.confirmInfo.goodsDetailInfos.concat();
+      this.$apply();
+    } else {
+      tip.error('获取订单信息失败');
+    }
+  }
+  clearData() {
+    this.shopCartIds = '';
+    this.confirmInfo = {};
+    this.receiveAddress = {};
+    this.details = [];
+  }
+  order() {
+    console.log(this.receiveAddress)
+    console.log(this.orderToken)
+  }
+  components = {};
+  methods = {
+    chooseOtherAddr() {
+      // this.$preload('receiveAddress', this.receiveAddress);
+      this.$navigate(
+        '/pages/receiveAddressList?addressId=' + this.receiveAddress.id
+      );
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad(options) {
+    this.clearData();
+    this.orderToken = options.token;
+    this.getOrderConfirmInfo();
+  }
+  onShow() {
+    let pages = getCurrentPages();
+    let currPage = pages[pages.length - 1];
+    if(currPage.data.receiveAddress){
+      Object.assign(this.receiveAddress, currPage.data.receiveAddress)
+    }
+  }
+}
+</script>
+
+<style lang='less'>
+.c-order-confirm {
+  //   background-color: #eeeeee;
+  .c-receive-address {
+    background-color: #fff;
+    display: flex;
+    line-height: 50rpx;
+    margin-top: 20rpx;
+    .address-left {
+      padding-top: 50rpx;
+      color: #31312b;
+      width: 60rpx;
+    }
+    .address-right {
+      width: 100%;
+      .address-header {
+        font-size: 30rpx;
+        color: #31312b;
+        display: flex;
+        justify-content: space-between;
+      }
+      .address-middle {
+        font-size: 28rpx;
+        color: #aaa;
+      }
+      .address-bottom {
+        font-size: 20rpx;
+        color: #e01f27;
+        text-align: right;
+      }
+    }
+  }
+  .c-goods-detail {
+    .goods-info {
+      margin-top: 10rpx;
+      display: flex;
+      justify-content: flex-start;
+      background-color: #fff;
+      // .icon_check {
+      //   padding-top: 48rpx;
+      // }
+      .img-box {
+        width: 155rpx;
+        overflow: hidden;
+        margin-left: 32rpx;
+      }
+      .text-box {
+        margin-left: 30rpx;
+        .goods-title {
+          font-size: 28rpx;
+          color: #1a1a1a;
+        }
+        .sku-area {
+          font-size: 24rpx;
+          margin-top: 10rpx;
+          color: #aaa;
+        }
+        .price-number {
+          display: flex;
+          margin-top: 10rpx;
+          .goods-price {
+            font-size: 30rpx;
+            color: #e01f27;
+            padding-top: 6rpx;
+          }
+          .num-area {
+            margin-left: 120rpx;
+            font-size: 26rpx;
+            padding-top: 10rpx;
+            color: #ccc;
+          }
+        }
+      }
+      .img-box .img {
+        width: 160rpx;
+        height: 160rpx;
+      }
+    }
+  }
+}
+.c-express {
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  font-size: 32rpx;
+  padding: 18rpx;
+  color: #31312b;
+  .right {
+    font-size: 30rpx;
+    color: #aaa;
+  }
+}
+.c-fee {
+  display: flex;
+  justify-content: space-between;
+  font-size: 30rpx;
+  color: #31312b;
+  padding: 18rpx;
+  .right {
+    text-align: right;
+  }
+}
+.c-bottom-area {
+  width: 100%;
+  height: 140rpx;
+  position: fixed;
+  bottom: 0;
+  z-index: 1001;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1rpx solid #ddd;
+  .left {
+    padding: 36rpx 30rpx;
+    font-size: 32rpx;
+    .price {
+      color: #e01f27;
+    }
+  }
+  .c-order-btn {
+    height: 88rpx;
+    font-size: 34rpx;
+    width: 300rpx;
+    background-color: #e01f27 !important;
+    color: #fff;
+    border-radius: 0;
+    margin: 18rpx;
+  }
+}
+</style>

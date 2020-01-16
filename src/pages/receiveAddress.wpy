@@ -1,0 +1,217 @@
+<!--  -->
+<template>
+  <view class="c-receive-address">
+    <view class="list">
+      <repeat for="{{addressList}}" key="index" index="index" item="item">
+        <view class="divider-large"></view>
+        <wux-wing-blank>
+          <view class="item">
+            <view class="item-top">
+              <text>{{item.name}}</text>
+              <text>{{item.phone}}</text>
+            </view>
+            <view class="item-middle">{{item.province}}{{item.city}}{{item.district}}{{item.address}}</view>
+            <wux-divider show-text="{{ false }}" />
+            <view class="item-bottom">
+              <view class="item-set-default">
+                <icon type="success" color="{{item.isDefault?'#31312b':'rgb(153,153,153)'}}" @tap.stop="setDefault" data-index="{{index}}" data-address-id="{{item.id}}" size="16" />
+                <text class="item-set-def-text">设为默认</text>
+              </view>
+              <view>
+                <wux-icon type="ios-create" size="16" color="#31312b" class="item-edit-icon"></wux-icon>
+                <text @tap.stop="editHandle" data-address-id="{{item.id}}">编辑</text>
+                <wux-icon type="ios-trash" size="16" color="#31312b" class="item-del-icon"></wux-icon>
+                <text @tap.stop="delHandle" data-address-id="{{item.id}}">删除</text>
+              </view>
+            </view>
+          </view>
+        </wux-wing-blank>
+      </repeat>
+    </view>
+    <view class="address-bottom-area">
+      <button class="add-address-btn" type="warn" bindtap="addAddressHandle">新增收货地址</button>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+export default class ReceiveAddress extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
+    navigationBarTitleText: '地址管理',
+    usingComponents: {
+      //   'wux-tab': './../lib/wux/tab/index',
+      //   'wux-tabs': './../lib/wux/tabs/index',
+      'wux-divider': './../lib/wux/divider/index',
+      //   'wux-white-space': './../lib/wux/white-space/index',
+      'wux-wing-blank': './../lib/wux/wing-blank/index',
+      'wux-icon': './../lib/wux/icon/index'
+      //   'wux-button': './../lib/wux/button/index',
+      //   'wux-switch': '../../lib/wux/switch/index',
+      //   'wux-input': './../lib/wux/input/index',
+      //   'wux-textarea': './../lib/wux/textarea/index'
+    }
+  };
+  data = {
+    addressList: [],
+    addressId: null
+  };
+  components = {};
+  methods = {
+    addAddressHandle() {
+      this.$navigate({
+        url: '/pages/receiveAddressAdd'
+      });
+    },
+    async setDefault(e) {
+      let index = e.currentTarget.dataset.index;
+      let addressId = e.currentTarget.dataset.addressId;
+      if (this.addressList[index].isDefault) {
+        tip.success('设置成功');
+        return;
+      }
+      let resp = await api.receiveAddress.setDefault({
+        addressId: addressId,
+        isDefault: !this.addressList[index].isDefault
+      });
+      if (resp.code === 0) {
+        this.addressList = resp.data.list;
+        tip.success('设置成功');
+        this.$apply();
+      } else {
+        console.log(resp.msg);
+        tip.error('设置失敗');
+      }
+    },
+    async delHandle(e) {
+      const _this = this
+      this.addressId = e.currentTarget.dataset.addressId;
+      wx.showModal({
+        title: '',
+        content: '确定删除该地址吗?',
+        success: function(res) {
+          if (res.confirm) {
+            _this.del()
+          } else if (res.cancel) {
+            _this.delCancel();
+          }
+        }
+      });
+    },
+    editHandle(e) {
+      console.log(e);
+      this.$navigate({
+        url:
+          '/pages/receiveAddressAdd?addressId=' +
+          e.currentTarget.dataset.addressId
+      });
+    }
+  };
+  async del() {
+    let resp = await api.receiveAddress.del({
+      addressId: this.addressId
+    });
+    if (resp.code === 0) {
+      this.addressList = resp.data.list;
+      this.addressId = null;
+      tip.success('删除成功');
+      this.$apply();
+    } else {
+      console.log(resp.msg);
+      tip.error('删除失敗');
+    }
+  }
+  delCancel() {
+    this.addressId = null;
+  }
+  async getAddressList() {
+    let resp = await api.receiveAddress.list();
+    if (resp.code === 0) {
+      this.addressList = resp.data.list;
+      this.$apply();
+    } else {
+      tip.error('获取地址列表失败');
+    }
+  }
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad(options) {}
+  onUnload() {
+    // let pages = getCurrentPages().length - 1;
+    // console.log('需要销毁的页面：'+pages);
+    // wx.navigateBack({
+    //   delta: 1
+    // })
+  }
+  onShow() {
+    this.getAddressList();
+  }
+}
+</script>
+
+<style lang='less'>
+.c-receive-address {
+  .list {
+    .choose-border {
+      border-top: 2rpx;
+      border-bottom: 2rpx;
+      border-top-color: #e01f27;
+      border-bottom-color: #e01f27;
+    }
+    .item {
+      color: #31312b;
+      margin-top: 30rpx;
+      margin-bottom: 30rpx;
+      font-size: 34rpx;
+      .item-top {
+        display: flex;
+        justify-content: space-between;
+      }
+      .item-middle {
+        color: #cacbc8;
+        margin-top: 12rpx;
+        font-size: 32rpx;
+      }
+      .item-bottom {
+        display: flex;
+        justify-content: space-between;
+        font-size: 30rpx;
+        .item-set-default {
+          display: flex;
+          .item-set-def-text {
+            margin-left: 20rpx;
+            font-size: 30rpx;
+          }
+        }
+      }
+      .item-edit-icon {
+        margin-right: 10rpx;
+      }
+      .item-del-icon {
+        margin-left: 40rpx;
+        margin-right: 10rpx;
+      }
+    }
+  }
+  .address-bottom-area {
+    position: fixed;
+    height: 150rpx;
+    bottom: 0;
+    width: 100%;
+    .add-address-btn {
+      height: 88rpx;
+      font-size: 34rpx;
+      border-radius: 0;
+    }
+  }
+}
+.divider-large {
+  background-color: #f0f0ef;
+  height: 22rpx;
+}
+</style>

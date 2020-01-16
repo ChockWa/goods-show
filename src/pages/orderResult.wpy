@@ -1,0 +1,43 @@
+<!--  -->
+<template>
+  <view class="c-order-result"></view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+export default class OrderResult extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
+    navigationBarTitleText: '订单结果',
+    usingComponents: {
+      //   'wux-tab': './../lib/wux/tab/index',
+      //   'wux-tabs': './../lib/wux/tabs/index',
+      'wux-divider': './../lib/wux/divider/index',
+      //   'wux-white-space': './../lib/wux/white-space/index',
+      'wux-wing-blank': './../lib/wux/wing-blank/index',
+      'wux-button': './../lib/wux/button/index',
+      'wux-switch': '../../lib/wux/switch/index',
+      'wux-input': './../lib/wux/input/index',
+      'wux-textarea': './../lib/wux/textarea/index'
+    }
+  };
+  data = {
+  };
+  components = {};
+  methods = {
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad(options) {
+  }
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.c-order-result {}
+</style>

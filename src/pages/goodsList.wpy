@@ -1,0 +1,108 @@
+<!-- 商品列表 -->
+<template>
+  <view class="container">
+    <bottomLoadMore :show.sync="topShowLoading" message="正在加载"></bottomLoadMore>
+    <wux-search-bar
+      clear=""
+      value="{{query.searchContent}}"
+      controlled="true"
+      maxlength="10"
+      bind:confirm="getGoodsList"
+    />
+    <scroll-view>
+      <view>
+        <shopGridList :list.sync="goodsList"></shopGridList>
+      </view>
+    </scroll-view>
+    <bottomLoadMore :show.sync="bottomShowLoading" message="正在加载"></bottomLoadMore>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+import tip from '@/utils/tip';
+import shopGridList from '@/components/shop_grid_list';
+import bottomLoadMore from '@/components/common/bottom_load_more';
+export default class GoodsList extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: "#31312b",
+    navigationBarTextStyle: "white",
+    navigationBarTitleText: '',
+    usingComponents: {
+      'wux-search-bar': './../lib/wux/search-bar/index'
+    }
+    // wux: ['search-bar']
+  };
+  data = {
+    brandList: [],
+    goodsList: [],
+    total: 0,
+    bottomShowLoading: false,
+    topShowLoading: false,
+    query: {
+      pageIndex: 1,
+      pageSize: 16,
+      searchContent: ''
+    }
+  };
+  components = {
+    shopGridList,
+    bottomLoadMore
+  };
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {};
+  async getGoodsList() {
+    let resp = await api.goods.list(this.query);
+    if (resp.code === 0) {
+      this.goodsList.push.apply(this.goodsList, resp.data.records);
+      this.total = resp.data.total;
+      this.$apply();
+    } else {
+      tip.error(resp.msg);
+    }
+  }
+  async getBrands() {
+    let resp = await api.brand.list();
+    if (resp.code === 0) {
+      this.brandList = resp.data.list;
+      this.$apply();
+    } else {
+      tip.error(resp.msg);
+    }
+  }
+  onLoad(options) {
+    wx.setNavigationBarTitle({
+      title: options.title
+    });
+    if (options.searchContent) {
+      this.searchContent = options.searchContent;
+    }
+    this.$apply();
+    this.getBrands();
+    this.getGoodsList();
+  }
+  onShow() {}
+  onPullDownRefresh() {
+    this.topShowLoading = true;
+    this.query.pageIndex = 1;
+    this.getGoodsList();
+    this.topShowLoading = false;
+  }
+  onReachBottom() {
+    if (this.goodsList.length === this.total) {
+      return;
+    } else {
+      this.bottomShowLoading = true;
+      this.query.pageIndex += 1;
+      this.getGoodsList();
+      this.bottomShowLoading = false;
+    }
+  }
+}
+</script>
+
+<style lang='less'>
+</style>
