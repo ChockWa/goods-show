@@ -64,15 +64,15 @@ export default class GoodsList extends wepy.page {
       tip.error(resp.msg);
     }
   }
-  async getBrands() {
-    let resp = await api.brand.list();
-    if (resp.code === 0) {
-      this.brandList = resp.data.list;
-      this.$apply();
-    } else {
-      tip.error(resp.msg);
-    }
-  }
+  // async getBrands() {
+  //   let resp = await api.brand.list();
+  //   if (resp.code === 0) {
+  //     this.brandList = resp.data.list;
+  //     this.$apply();
+  //   } else {
+  //     tip.error(resp.msg);
+  //   }
+  // }
   onLoad(options) {
     wx.setNavigationBarTitle({
       title: options.title
@@ -81,7 +81,7 @@ export default class GoodsList extends wepy.page {
       this.searchContent = options.searchContent;
     }
     this.$apply();
-    this.getBrands();
+    // this.getBrands();
     this.getGoodsList();
   }
   onShow() {}

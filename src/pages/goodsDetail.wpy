@@ -40,7 +40,7 @@
     <view wx:if="{{currentTab === 'question'}}">常见问题</view>
     <view class="detail-bottom" wx:if="{{hidden}}">
       <view class="bottom-box">
-        <view class="c-fav">
+        <!-- <view class="c-fav">
           <view class="c-fav-item" @tap="favAction">
             <view class="c-star-area">
               <ul>
@@ -50,10 +50,10 @@
             <view class="c-fav-font" wx:if="{{!isFav}}">收藏</view>
             <view class="c-fav-font{{isFav?'-activity':''}}" wx:if="{{isFav}}">已收藏</view>
           </view>
-        </view>
+        </view> -->
         <view class="c-add-cart-area">
           <!-- <button class="c-add-cart-btn" bindtap="takeCartHandle">加入购物车</button> -->
-          <wux-button class="c-add-cart-btn" block bind:click="takeCartHandle" type="assertive">加入购物车</wux-button>
+          <wux-button class="c-add-cart-btn" block bind:click="goToShop" type="assertive">前往店铺购买</wux-button>
         </view>
       </view>
     </view>
@@ -97,7 +97,7 @@
         <button class="confirm-button" type="warn" disabled="{{addCartDisabled}}" bindtap="takeCart">加入购物车</button>
       </view>
     </view>
-    <cartFabButton></cartFabButton>
+    <!-- <cartFabButton></cartFabButton> -->
   </view>
 </template>
 
@@ -105,7 +105,7 @@
   import wepy from 'wepy';
   import api from '@/api/api';
   import tip from '@/utils/tip';
-  import cartFabButton from '@/components/cart_fab_button';
+  // import cartFabButton from '@/components/cart_fab_button';
   export default class Example extends wepy.page {
     config = {
       navigationBarBackgroundColor: "#31312b",
@@ -142,7 +142,7 @@
       number: 1
     };
     components = {
-      cartFabButton
+      // cartFabButton
     };
     methods = {
       chooseSku(e) {
@@ -217,9 +217,10 @@
           urls: imageArry // 需要预览的图片http链接列表
         });
       },
-      takeCartHandle() {
-        this.showConfirmData();
-      },
+      // takeCartHandle() {
+      //   this.showConfirmData();
+      // },
+      goToShop(){},
       async takeCart() {
         let resp = await api.shopCart.add({
           goodsDetailId: this.goodsDetailId,

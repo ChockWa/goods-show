@@ -1,0 +1,34 @@
+<!--  -->
+<template>
+  <view class='container'></view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class ShopInfo extends wepy.page {
+    config = {
+      navigationBarBackgroundColor: "#31312b",
+      navigationBarTextStyle: "white",
+      navigationBarTitleText: "店铺信息"
+    };
+
+    data = {};
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='scss'>
+</style>
