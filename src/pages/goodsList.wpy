@@ -3,11 +3,13 @@
   <view class="container">
     <bottomLoadMore :show.sync="topShowLoading" message="正在加载"></bottomLoadMore>
     <wux-search-bar
-      clear=""
+      clear
       value="{{query.searchContent}}"
-      controlled="true"
+      controlled
       maxlength="10"
-      bind:confirm="getGoodsList"
+      bind:confirm="search"
+      bind:change="changeSearchContent"
+      bind:clear="clearSearchContent"
     />
     <scroll-view>
       <view>
@@ -26,8 +28,8 @@ import shopGridList from '@/components/shop_grid_list';
 import bottomLoadMore from '@/components/common/bottom_load_more';
 export default class GoodsList extends wepy.page {
   config = {
-    navigationBarBackgroundColor: "#31312b",
-    navigationBarTextStyle: "white",
+    navigationBarBackgroundColor: '#31312b',
+    navigationBarTextStyle: 'white',
     navigationBarTitleText: '',
     usingComponents: {
       'wux-search-bar': './../lib/wux/search-bar/index'
@@ -43,7 +45,8 @@ export default class GoodsList extends wepy.page {
     query: {
       pageIndex: 1,
       pageSize: 16,
-      searchContent: ''
+      searchContent: '',
+      categoryId: ''
     }
   };
   components = {
@@ -54,6 +57,27 @@ export default class GoodsList extends wepy.page {
   events = {};
   watch = {};
   computed = {};
+  changeSearchContent(e) {
+    if(e.detail.value){
+      this.query.searchContent = e.detail.value
+    }else{
+      this.query.searchContent = ''
+    }  
+  }
+  clearSearchContent() {
+    this.query.searchContent = ''
+  }
+  async search() {
+    console.log(this.query.searchContent);
+    let resp = await api.goods.list(this.query);
+    if (resp.code === 0) {
+      this.goodsList = resp.data.records;
+      this.total = resp.data.total;
+      this.$apply();
+    } else {
+      tip.error(resp.msg);
+    }
+  }
   async getGoodsList() {
     let resp = await api.goods.list(this.query);
     if (resp.code === 0) {
@@ -77,8 +101,11 @@ export default class GoodsList extends wepy.page {
     wx.setNavigationBarTitle({
       title: options.title
     });
+    if (options.categoryId) {
+      this.query.categoryId = options.categoryId;
+    }
     if (options.searchContent) {
-      this.searchContent = options.searchContent;
+      this.query.searchContent = options.searchContent;
     }
     this.$apply();
     // this.getBrands();

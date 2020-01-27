@@ -220,7 +220,9 @@
       // takeCartHandle() {
       //   this.showConfirmData();
       // },
-      goToShop(){},
+      goToShop(){
+        wx.switchTab({url:"/pages/shopInfo"})
+      },
       async takeCart() {
         let resp = await api.shopCart.add({
           goodsDetailId: this.goodsDetailId,
@@ -279,6 +281,18 @@
         this.$apply();
       }, 100);
     }
+    async getGoodsInfo(){
+      let resp = await api.goods.info({
+        goodsId: this.goodsId
+      });
+      if (resp.code === 0) {
+        this.detail = resp.data;
+        this.images = this.detail.images.split(',');
+        this.$apply();
+      } else {
+        tip(resp.msg, true);
+      }
+    }
     async getGoodsDetail() {
       let resp = await api.goods.detail({
         goodsId: this.goodsId
@@ -297,7 +311,7 @@
     onLoad(options) {
       this.winHeight = '100%';
       this.goodsId = options.goodsId;
-      this.getGoodsDetail();
+      this.getGoodsInfo();
     }
     onShow() {
       //创建动画
@@ -389,7 +403,7 @@
       padding: 15rpx 40rpx;
       line-height: 60rpx;
       font-size: 30rpx;
-      width: 50%;
+      width: 100%;
       .c-add-cart-btn button {
         height: 88rpx;
         font-size: 36rpx;

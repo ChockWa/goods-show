@@ -19,12 +19,21 @@ const goodsAPI = {
   },
   detail(params) {
     return getRequest("/goods-detail/item-detail", params)
+  },
+  info(params) {
+    return getRequest("/goods/info", params)
   }
 }
 
 const brandAPI = {
   list(params) {
     return getRequest("/brand/list", params)
+  }
+}
+
+const categoryAPI = {
+  list(params) {
+    return getRequest("/category/list", params)
   }
 }
 
@@ -95,5 +104,6 @@ module.exports = {
   shopCart: shopCartAPI,
   user: userAPI,
   receiveAddress: receiveAddressAPI,
-  order: orderAPI
+  order: orderAPI,
+  category: categoryAPI
 }

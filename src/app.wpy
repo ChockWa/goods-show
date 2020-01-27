@@ -16,6 +16,7 @@ export default class extends wepy.app {
       'pages/category',
       'pages/goodsList',
       'pages/goodsDetail',
+      'pages/shopInfo',
       'pages/shopCart',
       'pages/orderConfirm',
       'pages/my',
@@ -76,6 +77,12 @@ export default class extends wepy.app {
         "text": "分类",
         "iconPath": "images/icon_classify.png",
         "selectedIconPath": "images/icon_classify_active.png"
+      },
+      {
+        "pagePath": "pages/shopInfo",
+        "text": "店铺",
+        "iconPath": "images/icon_info.png",
+        "selectedIconPath": "images/icon_info_active.png"
       }]
     }
   }

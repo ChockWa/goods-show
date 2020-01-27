@@ -39,7 +39,7 @@ export default class ShopGridList extends wepy.component {
 <style lang="less">
 .shop_item {
   padding: 0rpx 15rpx;
-  background: #f7f7f7;
+  // background: #f7f7f7;
   display: flex;
   flex-wrap: wrap;
   padding-bottom: 30rpx;
@@ -57,12 +57,12 @@ export default class ShopGridList extends wepy.component {
     image {
       width: 100%;
       height: 345rpx;
-      border-radius: 12rpx;
     }
   }
   .product_name {
     color: #1a1a1a;
     font-size: 28rpx;
+    height: 62rpx;
   }
   .price {
     color: #de0000;

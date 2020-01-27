@@ -30,7 +30,12 @@
         </view>
       </view> -->
       <view class="nav_list">
-        <navigator open-type="navigate" url="/pages/sign_in">
+        <navigator open-type="navigate" url="/pages/goodsList?categoryId={{item.id}}" wx:for="{{categoryList}}">
+          <image src="{{item.logo}}" class="nav_icon"></image>
+          <view class="nav_text">{{item.name}}</view>
+        </navigator>
+
+        <!-- <navigator open-type="navigate" url="/pages/sign_in">
           <image src="../images/icon_nav_01_new.png" class="nav_icon"></image>
           <view class="nav_text">项链</view>
         </navigator>
@@ -41,11 +46,14 @@
         <navigator open-type="navigate" url="/pages/wholesale">
           <image src="../images/icon_nav_03_new.png" class="nav_icon"></image>
           <view class="nav_text">耳环</view>
-        </navigator>
-        <navigator open-type="navigate" url="/pages/goodsList?title=商品列表">
-          <image src="../images/icon_nav_04_new.png" class="nav_icon"></image>
+        </navigator> -->
+        <navigator open-type="switchTab" url="/pages/category">
+          <image src="../images/more.png" class="nav_icon"></image>
           <view class="nav_text">更多</view>
         </navigator>
+      </view>
+      <view class="love-title">
+        <image class="logo" src="../images/lovely.png">
       </view>
       <shopGridList :list.sync="lovelyList"></shopGridList>
       <!--发现好商品模块-->
@@ -79,6 +87,7 @@
       duration: 1000,
       indicatorActiveColor: '#fff',
       brandList: [],
+      categoryList: [],
       //是否有数据
       // is_empty: false,
       //当前页面
@@ -103,6 +112,15 @@
         tip.error(resp.msg);
       }
     }
+    async getCategories() {
+      let resp = await api.category.list();
+      if (resp.code === 0) {
+        this.categoryList = resp.data.list.slice(0, 3);
+        this.$apply();
+      } else {
+        tip.error(resp.msg);
+      }
+    }
     async getBannersAndLovelyList() {
       let resp = await api.guessLike.list();
       if (resp.code === 0) {
@@ -118,7 +136,7 @@
       }
     }
     onLoad() {
-      this.getBrands();
+      this.getCategories();
       this.getBannersAndLovelyList();
     }
     computed = {};
@@ -171,6 +189,8 @@
     font-size: 26rpx;
     justify-content: space-between;
     padding: 17rpx 50rpx;
+    border-top: 10rpx solid #f1f2f3;
+    border-bottom: 8rpx solid #f1f2f3;
     navigator {
       text-align: center;
     }
@@ -178,11 +198,20 @@
       height: 80rpx;
       margin: 0 auto;
       width: 80rpx;
-      margin-bottom: 14rpx;
+      margin-top: 8rpx;
     }
     .nav_text {
       font-size: 26rpx;
     }
+  }
+  .love-title {
+    .logo {
+      width: 180rpx;
+      height: 80rpx;
+    }
+    padding: 2rpx;
+    text-align: center;
+    border-bottom: 8rpx solid #f1f2f3;
   }
   .recommend-title {
     padding: 40rpx 0;
