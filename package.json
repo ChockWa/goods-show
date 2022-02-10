@@ -17,7 +17,7 @@
   "author": "zhuohuahe chockwa888@gmail.com><>",
   "license": "MIT",
   "dependencies": {
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "wepy": "^1.7.2",
     "wepy-async-function": "^1.4.7",
     "wepy-com-toast": "^1.0.2",
